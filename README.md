@@ -1,5 +1,6 @@
 # PORTAL CIKGU MAZLAN
 
-## Penerangan Projek
+This is the detailed documentation for the PORTAL CIKGU MAZLAN project. 
 
-Projek ini adalah untuk membangunkan ...
+## Pengenalan
+Portal Cikgu Mazlan adalah sistem untuk ...
