@@ -1,56 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
-// Mock users store
-let users = [];
-
-// POST /auth/google - Google OAuth login
+// Google OAuth Login
 router.post('/google', (req, res) => {
-    const { googleId, email, name, profilePicture } = req.body;
-    
-    // Check if user exists
-    let user = users.find(u => u.googleId === googleId);
-    
-    if (!user) {
-        // Create new user
-        const role = email === 'mazlan@qalish.com' ? 'admin' : 'pelajar';
-        user = {
-            id: users.length + 1,
-            googleId,
-            email,
-            name,
-            profilePicture,
-            role,
-            createdAt: new Date()
-        };
-        users.push(user);
-    }
-    
-    // Return user and mock JWT token
-    res.json({
-        user,
-        token: `jwt-token-${user.id}`,
-        message: 'Login successful'
-    });
+    // Implementation for Google OAuth login
 });
 
-// GET /auth/profile - Get current user profile
-router.get('/profile', (req, res) => {
-    // In production, this would use JWT token from headers
-    res.json({
-        message: 'User profile endpoint',
-        note: 'Implement JWT verification middleware'
-    });
+// Callback from Google
+router.get('/google/callback', (req, res) => {
+    // Implementation for handling callback from Google
 });
 
-// POST /auth/logout - Logout
+// User Authentication
+router.post('/login', (req, res) => {
+    // Implementation for user login
+});
+
+// User Logout
 router.post('/logout', (req, res) => {
-    res.json({ message: 'Logout successful' });
-});
-
-// GET /auth/users - Get all users (admin only)
-router.get('/users', (req, res) => {
-    res.json(users);
+    // Implementation for user logout
 });
 
 module.exports = router;
