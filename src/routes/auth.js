@@ -1,47 +1,56 @@
-'use strict';
-
 const express = require('express');
 const router = express.Router();
 
-// Dummy data for demonstration purposes
-const users = [{ email: 'mazlan@qalish.com', role: 'admin' }];
+// Mock users store
+let users = [];
 
-// Middleware to authenticate users and retrieve user role
-const authenticate = (req, res, next) => {
-    // This is a placeholder for actual authentication logic
-    // In practice, you would verify tokens and extract user info from a database
-    const userEmail = req.user?.email;
-    req.user = users.find(user => user.email === userEmail) || null;
-    next();
-};
-
-// GET /profile - Get user profile
-router.get('/profile', authenticate, (req, res) => {
-    if (!req.user) {
-        return res.status(404).json({ message: 'User not found' });
-    }
-    res.json({ email: req.user.email, role: req.user.role });
-});
-
-// POST /google - OAuth callback
+// POST /auth/google - Google OAuth login
 router.post('/google', (req, res) => {
-    // Placeholder for Google OAuth callback logic
-    // You would handle Google token verification and user signup/login here
-    const email = req.body.email; // Extracted from the Google payload
-    const user = users.find(user => user.email === email);
-    if (user) {
-        // User logged in
-        return res.json({ message: 'User logged in', user });
-    } else {
-        // User signed up (in a real app, you would add this user to your database)
-        res.json({ message: 'User signed up', email });
+    const { googleId, email, name, profilePicture } = req.body;
+    
+    // Check if user exists
+    let user = users.find(u => u.googleId === googleId);
+    
+    if (!user) {
+        // Create new user
+        const role = email === 'mazlan@qalish.com' ? 'admin' : 'pelajar';
+        user = {
+            id: users.length + 1,
+            googleId,
+            email,
+            name,
+            profilePicture,
+            role,
+            createdAt: new Date()
+        };
+        users.push(user);
     }
+    
+    // Return user and mock JWT token
+    res.json({
+        user,
+        token: `jwt-token-${user.id}`,
+        message: 'Login successful'
+    });
 });
 
-// POST /logout - Logout user
+// GET /auth/profile - Get current user profile
+router.get('/profile', (req, res) => {
+    // In production, this would use JWT token from headers
+    res.json({
+        message: 'User profile endpoint',
+        note: 'Implement JWT verification middleware'
+    });
+});
+
+// POST /auth/logout - Logout
 router.post('/logout', (req, res) => {
-    // Placeholder for logout logic (e.g., invalidate tokens)
-    res.json({ message: 'User logged out' });
+    res.json({ message: 'Logout successful' });
+});
+
+// GET /auth/users - Get all users (admin only)
+router.get('/users', (req, res) => {
+    res.json(users);
 });
 
 module.exports = router;
